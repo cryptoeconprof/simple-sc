@@ -19,22 +19,27 @@ jobs:
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
 
       - name: Show Forge version
-        run: |
-          forge --version
+        run: forge --version
 
       - name: Run Forge fmt
-        run: |
-          forge fmt --check
+        run: forge fmt --check
         id: fmt
 
-      - name: Run Forge build
+      # NEW: install libraries required by imports
+      - name: Install deps
         run: |
-          forge build --sizes
+          forge install foundry-rs/forge-std \
+            OpenZeppelin/openzeppelin-contracts@v5.0.2 \
+            OpenZeppelin/openzeppelin-contracts-upgradeable@v5.0.2
+
+      - name: Run Forge build
+        run: forge build --sizes
         id: build
 
       - name: Run Forge tests
-        run: |
-          forge test -vvv
+        run: forge test -vvv
         id: test
